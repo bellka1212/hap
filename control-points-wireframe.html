@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Points Portfolio</title>
+<style>
+:root{--navy:#0A1628;--navy-light:#0F1D32;--navy-mid:#142440;--border:rgba(255,255,255,0.08);--border-light:rgba(10,22,40,0.10);--white:#fff;--g100:#F4F5F7;--g200:#E2E4E8;--g300:#C8CBD0;--g400:#9DA1A8;--g600:#5A5F68;--td:#1A1E25;--tm:#4A4F58}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono','Fira Code',Consolas,Monaco,monospace;background:var(--g100);color:var(--td);line-height:1.6;font-size:14px}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:280px;min-width:280px;background:var(--navy);color:var(--white);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sidebar-header{padding:32px 24px 24px;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--white);margin-bottom:4px}
+.sidebar-header .sub{font-size:10px;color:var(--g400);letter-spacing:1px;text-transform:uppercase}
+.nav{padding:16px 0;flex:1}
+.nav a{display:block;padding:8px 24px;color:var(--g300);text-decoration:none;font-size:13px;transition:background .15s,color .15s;cursor:pointer}
+.nav a:hover,.nav a.active{background:rgba(255,255,255,.05);color:var(--white)}
+.nav-sec{padding:16px 24px 6px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g400);font-weight:600;cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px}
+.nav-sec .chv{font-size:8px;transition:transform .2s}
+.nav-sec.collapsed .chv{transform:rotate(-90deg)}
+.nav-ch{overflow:hidden;max-height:500px;transition:max-height .3s ease}
+.nav-ch.collapsed{max-height:0}
+.nav-ch a{padding-left:36px;font-size:12px;color:var(--g400)}
+.nav-ch a:hover{color:var(--g200)}
+.nav-div{height:1px;background:var(--border);margin:8px 24px}
+.sidebar-foot{padding:16px 24px;border-top:1px solid var(--border);font-size:10px;color:var(--g400);letter-spacing:.5px}
+.main{margin-left:280px;flex:1;min-height:100vh}
+.page{display:none;animation:fi .2s ease}
+.page.active{display:block}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.hero{background:var(--navy);color:var(--white);padding:64px 56px;border-bottom:1px solid var(--border)}
+.hero h2{font-size:24px;font-weight:600;letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}
+.hero .tag{font-size:14px;color:var(--g300);font-weight:400}
+.dk{background:var(--navy);color:var(--white);padding:48px 56px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.dk h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g400);margin-bottom:16px;font-weight:600}
+.dk p,.dk li{color:var(--g300);font-size:13px;line-height:1.7}
+.dk p{margin-bottom:12px}
+.dk ul{list-style:none;margin-bottom:12px}
+.dk ul li{padding:3px 0}
+.dk ul li::before{content:"—";color:var(--g400);margin-right:10px}
+.cs{padding:48px 56px;border-bottom:1px solid var(--border-light);max-width:900px}
+.cs h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g600);margin-bottom:20px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--g200)}
+.cs h4{font-size:14px;font-weight:600;color:var(--td);margin-bottom:12px;margin-top:24px}
+.cs p{color:var(--tm);margin-bottom:12px;font-size:13px;line-height:1.75}
+.cs ul{list-style:none;margin-bottom:16px}
+.cs ul li{padding:4px 0;color:var(--tm);font-size:13px}
+.cs ul li::before{content:"•";color:var(--g400);margin-right:10px}
+.stats-row{display:flex;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.sb{flex:1;background:var(--navy-light);padding:32px 24px;text-align:center}
+.sb .num{font-size:28px;font-weight:600;color:var(--white);margin-bottom:4px}
+.sb .lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g400)}
+.sb .det{font-size:11px;color:var(--g400);margin-top:8px}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-light);border-bottom:1px solid var(--border-light)}
+.pillar{background:var(--white);padding:36px 28px}
+.pillar h4{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--td);margin-bottom:12px;font-weight:600}
+.pillar p{font-size:12px;color:var(--tm);line-height:1.7}
+.cb{background:var(--navy-mid);padding:28px 56px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cb .conf{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g400)}
+.cb .info{text-align:right;color:var(--g300);font-size:13px}
+.cb .info .nm{font-weight:600;color:var(--white);margin-bottom:2px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.si{padding:16px 20px;border:1px solid var(--g200);background:var(--white)}
+.si .lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g600);margin-bottom:6px;font-weight:600}
+.si .val{font-size:13px;color:var(--td);line-height:1.6}
+.ph{padding:32px;border:1px dashed var(--g300);background:var(--g100);color:var(--g600);font-size:12px;text-align:center;letter-spacing:1px;margin:16px 0}
+.phd{padding:32px;border:1px dashed rgba(255,255,255,.15);background:rgba(255,255,255,.03);color:var(--g400);font-size:12px;text-align:center;letter-spacing:1px;margin:16px 0}
+.sc{padding:36px 0;border-bottom:1px solid var(--g200)}
+.sc:last-child{border-bottom:none}
+.sc .sh{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sc .sn{font-size:14px;font-weight:700;color:var(--td);letter-spacing:1px}
+.sc .sfn{font-size:12px;color:var(--g600)}
+.sc .sd{font-size:13px;color:var(--tm);margin-bottom:16px;margin-top:8px;line-height:1.7}
+.sc .sp{font-size:13px;color:var(--td);font-weight:600;margin-top:16px;font-style:italic}
+.sm{display:flex;gap:32px;margin-top:16px;padding-top:16px;border-top:1px solid var(--g200)}
+.smb .ml{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g600);font-weight:600;margin-bottom:4px}
+.smb .mv{font-size:12px;color:var(--tm);line-height:1.6}
+.pc{padding:28px;border:1px solid var(--g200);background:var(--white);margin-bottom:16px}
+.pc .badge{display:inline-block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g600);border:1px solid var(--g300);padding:2px 10px;margin-bottom:12px}
+.pc h4{font-size:14px;font-weight:700;color:var(--td);margin-bottom:8px}
+.pc p{font-size:13px;color:var(--tm);line-height:1.7}
+.sf{background:var(--navy);color:var(--white);padding:48px 56px;border-top:1px solid var(--border)}
+.sf h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g400);margin-bottom:20px;font-weight:600}
+.sf p{color:var(--g300);font-size:13px;line-height:1.7;margin-bottom:12px}
+.sf ul{list-style:none;margin-bottom:16px}
+.sf ul li{color:var(--g300);font-size:13px;padding:2px 0}
+.sf ul li::before{content:"—";color:var(--g400);margin-right:10px}
+.cr{background:var(--navy);padding:16px 56px;border-top:1px solid var(--border);font-size:11px;color:var(--g600);letter-spacing:.5px}
+.ax{padding:40px 56px;background:var(--white);border-bottom:1px solid var(--border-light)}
+.ax-list{display:flex;gap:48px}
+.ax-item{font-size:13px;color:var(--td);font-weight:600}
+.ax-item span{color:var(--g400);font-weight:400}
+.mt{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--navy);color:var(--white);border:1px solid var(--border);padding:8px 12px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px}
+@media(max-width:900px){
+.mt{display:block}.sidebar{transform:translateX(-100%);transition:transform .3s ease}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.hero{padding:48px 24px}.cs{padding:32px 24px}.dk{padding:32px 24px}.cb{padding:20px 24px;flex-direction:column;gap:12px;text-align:center}.cb .info{text-align:center}.pillars{grid-template-columns:1fr}.stats-row{flex-direction:column}.sg{grid-template-columns:1fr}.ax-list{flex-direction:column;gap:12px}.sf{padding:32px 24px}.cr{padding:16px 24px}.sm{flex-direction:column;gap:12px}
+}
+</style>
+</head>
+<body>
+<button class="mt" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ NAV</button>
+<div class="layout">
+<nav class="sidebar">
+<div class="sidebar-header"><h1>Control Points</h1><div class="sub">Patent Portfolio</div></div>
+<div class="nav">
+<a href="#" class="active" onclick="showPage('home',this)">Control Points</a>
+<div class="nav-div"></div>
+<div class="nav-sec" onclick="toggleNav(this)"><span class="chv">▾</span> Time File</div>
+<div class="nav-ch">
+<a href="#" onclick="showPage('timefile',this);scrollTo2('tf-what')">What Time File Is</a>
+<a href="#" onclick="showPage('timefile',this);scrollTo2('tf-how')">How Time File Works</a>
+<a href="#" onclick="showPage('timefile',this);scrollTo2('tf-lifecycle')">Lifecycle &amp; Enforcement</a>
+<a href="#" onclick="showPage('timefile',this);scrollTo2('tf-apps')">Real-World Applications</a>
+<a href="#" onclick="showPage('timefile',this);scrollTo2('tf-walk')">Enforcement Walkthrough</a>
+<a href="#" onclick="showPage('timefile',this);scrollTo2('tf-patent')">Patent &amp; Scope</a>
+</div>
+<div class="nav-sec" onclick="toggleNav(this)"><span class="chv">▾</span> HAP</div>
+<div class="nav-ch">
+<a href="#" onclick="showPage('hap',this);scrollTo2('hap-flow')">How HAP Works: System Flow</a>
+<a href="#" onclick="showPage('hap',this);scrollTo2('hap-patent')">Patent Status &amp; Scope</a>
+</div>
+<div class="nav-sec" onclick="toggleNav(this)"><span class="chv">▾</span> AI Governance</div>
+<div class="nav-ch">
+<a href="#" onclick="showPage('aigov',this);scrollTo2('aipt')">AIPT</a>
+<a href="#" onclick="showPage('aigov',this);scrollTo2('factfunnel')">Fact Funnel</a>
+<a href="#" onclick="showPage('aigov',this);scrollTo2('truthgate')">Truth Gate</a>
+<a href="#" onclick="showPage('aigov',this);scrollTo2('cim')">CIM</a>
+<a href="#" onclick="showPage('aigov',this);scrollTo2('cnil')">CNIL</a>
+<a href="#" onclick="showPage('aigov',this);scrollTo2('aiap')">AIAP</a>
+<a href="#" onclick="showPage('aigov',this);scrollTo2('nlqrs')">NLQRS</a>
+</div>
+<div class="nav-div"></div>
+<a href="#" onclick="showPage('pipeline',this)">Pipeline</a>
+<a href="#" onclick="showPage('contact',this)">Contact</a>
+</div>
+<div class="sidebar-foot">Confidential — Broker Access Only</div>
+</nav>
+<main class="main">
+<!-- HOME -->
+<div id="page-home" class="page active">
+<div class="hero"><h2>Control Points Portfolio</h2><p class="tag">Infrastructure Primitives for Authority, Finality, and Verification</p></div>
+<div class="stats-row">
+<div class="sb"><div class="num">17</div><div class="lbl">Pending U.S. Patent Applications</div></div>
+<div class="sb"><div class="num">9</div><div class="lbl">Core Non-Provisionals</div></div>
+<div class="sb"><div class="num">6</div><div class="lbl">Continuations / CIPs</div></div>
+<div class="sb"><div class="num">2</div><div class="lbl">Provisionals</div><div class="det">Multiple Track One Accelerated Filings</div></div>
+</div>
+<div class="cb"><div class="conf">Confidential — Broker Access Only</div><div class="info"><div class="nm">Scott Lipskin</div><div>516-297-9906</div><div>scott@mirror2point0.com</div></div></div>
+<div class="cs"><h3>Three Independent Infrastructure Primitives</h3></div>
+<div class="pillars">
+<div class="pillar"><h4>Document Finality</h4><p>Infrastructure for determining when something becomes final, what state is authoritative, and what cannot be changed after acceptance.</p></div>
+<div class="pillar"><h4>Human Authorization</h4><p>Infrastructure for verifying that a specific human intentionally approved a specific action at the moment it was requested.</p></div>
+<div class="pillar"><h4>AI Governance</h4><p>Infrastructure for governing invocation, verification, acceptance, coherence, influence, coordination, and resolution across AI systems.</p></div>
+</div>
+<div class="cs"><p>Each pillar is independently deployable and transaction-separable.</p><p>No system requires modification of third-party platform internals.</p></div>
+<div class="ax"><div class="ax-list"><div class="ax-item">Authority <span>is external.</span></div><div class="ax-item">Finality <span>is structural.</span></div><div class="ax-item">Verification <span>is deterministic.</span></div></div></div>
+<div class="cs"><p>Detailed prosecution summaries, prior art search reports, and attorney assessments available upon request.</p></div>
+<div class="sf"><h3>Portfolio Structure &amp; Transaction Flexibility</h3><p>The portfolio spans three independent infrastructure categories:</p><ul><li>Document Finality</li><li>Human Authorization</li><li>AI Governance</li></ul><p>Systems may be licensed individually or transacted in grouped structures. The architecture is modular by design.</p><p>Acceleration via Track One strengthens negotiation posture and reduces timeline uncertainty.</p><p>Detailed prosecution materials available upon request.</p></div>
+<div class="cr">© Control Points Portfolio. All rights reserved. Confidential.</div>
+</div>
+<!-- TIME FILE -->
+<div id="page-timefile" class="page">
+<div class="hero"><h2>Time File</h2><p class="tag">Document Finality Infrastructure</p></div>
+<div class="cs" id="tf-what">
+<h3>What Time File Is</h3>
+<p>Time File introduces time as a first-class design primitive in document systems.</p>
+<p>It exists to determine when something becomes final, what state is authoritative, and what cannot be changed after acceptance.</p>
+<p>Any platform that presents a single document surface with collaborative modification must define authoritative state over time. Time File structurally enforces that boundary.</p>
+<h4>Purpose</h4>
+<p>To bind document truth to explicit authority and time.</p>
+<h4>Core Capabilities</h4>
+<ul>
+<li>Single canonical document identity</li>
+<li>Authority-controlled lifecycle transitions</li>
+<li>Structural termination of mutability</li>
+<li>Time-addressable authoritative state retrieval</li>
+<li>Non-forking canonical lineage</li>
+<li>Deterministic historical truth recovery</li>
+</ul>
+</div>
+<div class="dk">
+<h3>The Problem</h3>
+<div class="phd">[EXISTING CONTENT — "Modern tools make it easy to edit..." section from current Time File page]</div>
+</div>
+<div class="cs" id="tf-how">
+<h3>How Time File Works</h3>
+<div class="ph">[EXISTING CONTENT — Deeper technical content from current Time File page]</div>
+</div>
+<div class="cs" id="tf-lifecycle">
+<h3>Time File Lifecycle and Enforcement</h3>
+<div class="ph">[EXISTING CONTENT — Lifecycle and enforcement details from current Time File page]</div>
+</div>
+<div class="cs" id="tf-apps">
+<h3>Real-World Applications</h3>
+<div class="ph">[EXISTING CONTENT — Real-world application examples from current Time File page]</div>
+</div>
+<div class="cs" id="tf-walk">
+<h3>Deterministic Enforcement Walkthrough</h3>
+<div class="ph">[EXISTING CONTENT — Step-by-step enforcement walkthrough from current Time File page]</div>
+</div>
+<div class="cs" id="tf-patent">
+<h3>Time File Patent &amp; Scope</h3>
+<div class="ph">[EXISTING CONTENT — Patent scope and claim details from current Time File page]</div>
+<div class="sg">
+<div class="si"><div class="lbl">Filing Status</div><div class="val">Non-Provisional Filed<br>Continuation Filed<br>Track One Acceleration</div></div>
+<div class="si"><div class="lbl">Attorney Patentability Assessment</div><div class="val">75–80% likelihood of issuance following independent prior art search.</div></div>
+<div class="si" style="grid-column:span 2"><div class="lbl">Potential Strategic Fit</div><div class="val">Enterprise document platforms · Collaboration suites · Compliance and audit systems · Legal and regulatory infrastructure</div></div>
+</div>
+</div>
+<div class="sf"><h3>Portfolio Structure &amp; Transaction Flexibility</h3><p>The portfolio spans three independent infrastructure categories:</p><ul><li>Document Finality</li><li>Human Authorization</li><li>AI Governance</li></ul><p>Systems may be licensed individually or transacted in grouped structures. The architecture is modular by design.</p><p>Acceleration via Track One strengthens negotiation posture and reduces timeline uncertainty.</p><p>Detailed prosecution materials available upon request.</p></div>
+<div class="cr">© Control Points Portfolio. All rights reserved. Confidential.</div>
+</div>
+<!-- HAP -->
+<div id="page-hap" class="page">
+<div class="hero"><h2>Human Authorization Plane (HAP)</h2><p class="tag">Human Authorization Infrastructure</p></div>
+<div class="cs">
+<h3>Overview</h3>
+<p>HAP converts authorization from a persistent credential model into a real-time event model.</p>
+<p>It verifies that a specific human intentionally approved a specific action at that moment.</p>
+<p>HAP produces time-bound authorization artifacts — not reusable credentials.</p>
+<p>Any system requiring high-assurance execution gating must resolve this boundary.</p>
+<h4>Purpose</h4>
+<p>To enforce real-time, human-performed authorization as a system primitive.</p>
+<h4>Core Capabilities</h4>
+<ul>
+<li>Live system-initiated authorization challenge</li>
+<li>Device-bound human verification</li>
+<li>Non-reusable authorization artifact</li>
+<li>Time-limited approval events</li>
+<li>Architectural separation from execution logic</li>
+</ul>
+<p>HAP creates a deterministic authorization boundary prior to execution.</p>
+</div>
+<div class="dk">
+<h3>The Problem</h3>
+<p>Most systems rely on reusable credentials, long-lived permissions, or stored identity proofs.</p>
+<ul>
+<li>Passwords persist long after intent is gone.</li>
+<li>Credentials can be shared, stolen, or replayed.</li>
+<li>Biometrics alone can be recorded or synthesized.</li>
+</ul>
+<p>As AI, automation, and delegation scale, these mechanisms no longer answer the question that actually matters: <strong style="color:var(--white)">Who is authorizing this action right now?</strong></p>
+<p>Identity systems authenticate who someone is. They do not verify who is acting in the moment.</p>
+</div>
+<div class="cs">
+<h3>What HAP Is</h3>
+<p>The Human Authorization Plane (HAP) is a standalone system designed to verify real-time, intentional authorization by the correct human at the moment an action is requested.</p>
+<ul>
+<li>A real human is present</li>
+<li>The correct authorized human is present</li>
+<li>The human is physically in control of the device</li>
+<li>The authorization is intentional</li>
+<li>The authorization is occurring now</li>
+</ul>
+<p>HAP produces time-limited authorization events, not reusable credentials or standing permissions.</p>
+<p><strong>Authorization becomes an event, not a credential.</strong></p>
+</div>
+<div class="cs" id="hap-flow">
+<h3>How HAP Works: System Flow</h3>
+<div class="ph">[EXISTING CONTENT — Detailed system flow from current HAP page]</div>
+</div>
+<div class="cs" id="hap-patent">
+<h3>HAP Patent Status &amp; Scope</h3>
+<div class="ph">[EXISTING CONTENT — Patent scope and claim details from current HAP page]</div>
+<div class="sg">
+<div class="si"><div class="lbl">Filing Status</div><div class="val">Non-Provisional Filed<br>Continuation Filed<br>Track One Acceleration</div></div>
+<div class="si"><div class="lbl">Attorney Patentability Assessment</div><div class="val">75–80% likelihood of issuance following independent prior art search.</div></div>
+<div class="si" style="grid-column:span 2"><div class="lbl">Potential Strategic Fit</div><div class="val">Device ecosystems · Financial authorization systems · Healthcare consent infrastructure · High-risk execution gating</div></div>
+</div>
+</div>
+<div class="sf"><h3>Portfolio Structure &amp; Transaction Flexibility</h3><p>The portfolio spans three independent infrastructure categories:</p><ul><li>Document Finality</li><li>Human Authorization</li><li>AI Governance</li></ul><p>Systems may be licensed individually or transacted in grouped structures. The architecture is modular by design.</p><p>Acceleration via Track One strengthens negotiation posture and reduces timeline uncertainty.</p><p>Detailed prosecution materials available upon request.</p></div>
+<div class="cr">© Control Points Portfolio. All rights reserved. Confidential.</div>
+</div>
